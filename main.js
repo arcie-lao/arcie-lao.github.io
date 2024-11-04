@@ -1,9 +1,11 @@
+const BASE_URL = 'https://arcielao.com/4537_project/';
+
 // Register a new user
 async function register() {
   const email = document.getElementById('register-email').value;
   const password = document.getElementById('register-password').value;
 
-  const response = await fetch('http://localhost:3000/auth/register', {
+  const response = await fetch(`${BASE_URL}auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -18,7 +20,7 @@ async function login() {
   const email = document.getElementById('login-email').value;
   const password = document.getElementById('login-password').value;
 
-  const response = await fetch('http://localhost:3000/auth/login', {
+  const response = await fetch(`${BASE_URL}auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -28,7 +30,6 @@ async function login() {
   const data = await response.json();
   if (response.ok) {
       alert('Login successful');
-    //   sessionStorage.setItem('userId', data.userId);
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('register-section').classList.add('hidden');
       document.getElementById('usage-section').classList.remove('hidden');
@@ -39,10 +40,10 @@ async function login() {
 
 // Get the current API usage count
 async function getUsage() {
-  const response = await axios.get('http://localhost:3000/admin/usage', { withCredentials: true });
+  const response = await axios.get(`${BASE_URL}admin/usage`, { withCredentials: true });
 
   const data = response.data;
-  if (response.ok) {
+  if (response.status === 200) {
       document.getElementById('usage-output').innerText = `Current Usage: ${data.usage.api_usage}`;
   } else {
       alert(data.error);
@@ -51,7 +52,7 @@ async function getUsage() {
 
 // Increment the API usage count
 async function incrementUsage() {
-  const response = await fetch('http://localhost:3000/admin/increment-usage', {
+  const response = await fetch(`${BASE_URL}admin/increment-usage`, {
       method: 'POST',
   });
 
@@ -66,7 +67,7 @@ async function incrementUsage() {
 
 // Log out the user
 async function logout() {
-  const response = await fetch('http://localhost:3000/auth/logout', {
+  const response = await fetch(`${BASE_URL}auth/logout`, {
     method: 'POST',
     credentials: 'include'
   });
