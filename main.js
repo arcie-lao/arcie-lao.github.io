@@ -56,6 +56,45 @@ async function getUsage() {
   }
 }
 
+// Upload audio file for analysis
+async function uploadAudio() {
+  const fileInput = document.getElementById('audio-file');
+  const file = fileInput.files[0];
+
+  if (!file) {
+      alert("Please select an audio file.");
+      return;
+  }
+
+  const response = await fetch(`${BASE_URL}api/analyze`, {
+      method: 'POST',
+      body: file,
+      credentials: 'include'
+  });
+
+  console.log(response);
+
+  const data = await response.json();
+  if (response.ok) {
+      document.getElementById('audio-output').innerText = `Analysis Result: ${data.result}`;
+  } else {
+      alert(data.error);
+  }
+}
+
+async function test() {
+  const response = await fetch(`${BASE_URL}api/test`, {
+      method: 'GET',
+      credentials: 'include'
+  });
+
+  console.log(response);
+
+  if (response.ok) {
+    document.getElementById('test-output').innerText = response.message;
+  }
+}
+
 async function getUsers() {
   const response = await fetch(`${BASE_URL}admin/users`, {
       method: 'GET',

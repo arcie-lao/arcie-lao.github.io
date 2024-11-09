@@ -29,8 +29,20 @@
     <!-- Usage Section -->
     <div class="section hidden" id="usage-section">
         <h2>Welcome!</h2>
+
+        <div class="section" id="audio-upload-section">
+            <h2>Upload Audio File for Analysis</h2>
+            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" required>
+            <button onclick="uploadAudio()">Analyze Audio</button>
+            <p id="audio-output"></p>
+        </div>
+
+        <button onclick="test()">Test</button>
+        <p id="test-output"></p>
+
         <button onclick="getUsage()">Get Usage</button>
         <p id="usage-output"></p>
+
         <div class="section hidden" id="admin-section">
             <h2>Admin Section</h2>
             <button onclick="getUsers()">Get Users</button>
