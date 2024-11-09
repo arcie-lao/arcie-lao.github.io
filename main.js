@@ -66,17 +66,26 @@ async function uploadAudio() {
       return;
   }
 
+  const formData = new FormData();
+  formData.append('file', file); // Ensure your server expects this field name
+
   const response = await fetch(`${BASE_URL}api/analyze`, {
       method: 'POST',
       body: file,
       credentials: 'include'
   });
 
-  console.log(response);
+  const rawData = await response.json();
 
-  const data = await response.json();
+  const scores = rawData.data;
+
   if (response.ok) {
-      document.getElementById('audio-output').innerText = `Analysis Result: ${data.result}`;
+    for (let i = 0; i < scores.length; i++) {
+        const score = scores[i];
+        const scoreElement = document.createElement('div');
+        scoreElement.innerText = `Label: ${score.label},Score ${i + 1}: ${score.score}`;
+        document.getElementById('audio-output').appendChild(scoreElement);
+    }
   } else {
       alert(data.error);
   }
@@ -88,10 +97,10 @@ async function test() {
       credentials: 'include'
   });
 
-  console.log(response);
+  const data = await response.json();
 
   if (response.ok) {
-    document.getElementById('test-output').innerText = response.message;
+    document.getElementById('test-output').innerText = data.message;
   }
 }
 
