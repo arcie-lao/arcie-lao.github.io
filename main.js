@@ -1,5 +1,5 @@
-// const BASE_URL = 'https://arcielao.com/4537_project/';
-const BASE_URL = 'http://localhost:3000/4537_project/';
+const BASE_URL = 'https://arcielao.com/4537_project/';
+// const BASE_URL = 'http://localhost:3000/4537_project/';
 
 window.onload = async function () {
   try {
