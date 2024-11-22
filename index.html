@@ -3,54 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Usage Tracker</title>
+    <title>Audio Classification Application</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <h1>API Usage Tracker</h1>
-
-    <!-- Registration Form -->
-    <div class="section" id="register-section">
-        <h2>Register</h2>
-        <input type="email" id="register-email" placeholder="Email" required>
-        <input type="password" id="register-password" placeholder="Password" required>
-        <button onclick="register()">Register</button>
+    <!-- Registration Section -->
+    <div id="register-section">
+        <h1>Register</h1>
+        <label>Email:</label><br>
+        <input type="email" id="register-email" required><br><br>
+        <label>Password:</label><br>
+        <input type="password" id="register-password" required><br><br>
+        <button onclick="register()">Register</button><br><br>
+        <a href="#" onclick="showLogin()">Already have an account? Login</a>
     </div>
 
-    <!-- Login Form -->
-    <div class="section" id="login-section">
-        <h2>Login</h2>
-        <input type="email" id="login-email" placeholder="Email" required>
-        <input type="password" id="login-password" placeholder="Password" required>
-        <button onclick="login()">Login</button>
+    <!-- Login Section -->
+    <div id="login-section" class="hidden">
+        <h1>Login</h1>
+        <label>Email:</label><br>
+        <input type="email" id="login-email" required><br><br>
+        <label>Password:</label><br>
+        <input type="password" id="login-password" required><br><br>
+        <button onclick="login()">Login</button><br><br>
+        <a href="#" onclick="showRegister()">Don't have an account? Register</a>
     </div>
 
-    <!-- Usage Section -->
-    <div class="section hidden" id="usage-section">
-        <h2>Welcome!</h2>
-
+    <!-- User Page -->
+    <div id="user-page" class="hidden">
+        <h1>User Page</h1>
+        <p>Welcome, User!</p>
+        
         <div class="section" id="audio-upload-section">
-            <h2>Upload Audio File for Analysis</h2>
-            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" required>
+            <h2>Upload Audio for Analysis</h2>
+            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" multiple>
             <button onclick="uploadAudio()">Analyze Audio</button>
             <p id="audio-output"></p>
         </div>
 
-        <button onclick="test()">Test</button>
-        <p id="test-output"></p>
-
-        <button onclick="getUsage()">Get Usage</button>
+        <button onclick="getUsage()">Get API Usage</button>
         <p id="usage-output"></p>
 
-        <div class="section hidden" id="admin-section">
-            <h2>Admin Section</h2>
-            <button onclick="getUsers()">Get Users</button>
-            <p id="users-output"></p>
-        </div>
         <button onclick="logout()">Logout</button>
     </div>
 
+    <!-- Admin Page -->
+    <div id="admin-page" class="hidden">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, Admin!</p>
+
+        <div class="section" id="audio-upload-section">
+            <h2>Upload Audio for Analysis</h2>
+            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" multiple>
+            <button onclick="uploadAudio()">Analyze Audio</button>
+            <p id="audio-output"></p>
+        </div>
+    
+        <button onclick="getUsage()">Get API Usage</button>
+        <p id="usage-output"></p>
+    
+        <div class="section" id="admin-section">
+            <h2>Admin Dashboard</h2>
+            <button onclick="getUsers()">View All Users</button>
+            <p id="users-output"></p>
+        </div>
+
+        <button onclick="logout()">Logout</button>
+    </div>
 
     <script src="main.js"></script>
 </body>

@@ -1,48 +1,219 @@
-const BASE_URL = 'https://arcielao.com/4537_project/';
+// const BASE_URL = 'https://arcielao.com/4537_project/';
+const BASE_URL = 'http://localhost:3000/4537_project/';
+
+window.onload = async function () {
+  try {
+      const response = await fetch(`${BASE_URL}auth/session`, {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+          // Session is valid, update UI based on the user role
+          updateUI(data.role);
+      } else {
+          showLogin(); // Invalid session, show login form
+      }
+  } catch (err) {
+      console.error('Error validating session:', err);
+      showLogin(); // Handle errors by showing the login page
+  }
+};
+
+function getCookie(name) {
+  const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+  for (let cookie of cookies) {
+      if (cookie.startsWith(`${name}=`)) {
+          return cookie.substring(name.length + 1);
+      }
+  }
+  return null;
+}
 
 // Register a new user
 async function register() {
-  const email = document.getElementById('register-email').value;
-  const password = document.getElementById('register-password').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
 
-  const response = await fetch(`${BASE_URL}auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-  });
+    if (!email || !password) {
+        alert("Please fill out all fields.");
+        return;
+    }
 
-  const data = await response.json();
-  alert(data.message || data.error);
+    try {
+        const response = await fetch(`${BASE_URL}auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        alert(data.message || data.error);
+
+        if (response.ok) {
+            showLogin(); // Redirect to login after successful registration
+        }
+    } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred during registration.");
+    }
 }
 
 // Log in a user
 async function login() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
 
-  const response = await fetch(`${BASE_URL}auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include'
-  });
+    if (!email || !password) {
+        alert("Please fill out all fields.");
+        return;
+    }
 
-  const data = await response.json();
-  if (response.ok) {
-      alert('Login successful');
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('register-section').classList.add('hidden');
-      if (data.role == 'admin') {
-          document.getElementById('admin-section').classList.remove('hidden');
-      }
-      document.getElementById('usage-section').classList.remove('hidden');
-  } else {
-      alert(data.error);
-  }
+    try {
+        const response = await fetch(`${BASE_URL}auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Login successful");
+            updateUI(data.role); // Pass the user role to update the UI
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        console.error("Error during login:", error);
+        alert("An error occurred during login.");
+    }
+}
+
+// Log out the user
+async function logout() {
+    try {
+        const response = await fetch(`${BASE_URL}auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+        alert(data.message);
+
+        // Reset UI
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('register-section').classList.add('hidden');
+        document.getElementById('user-page').classList.add('hidden');
+        document.getElementById('admin-page').classList.add('hidden');
+    } catch (error) {
+        console.error("Error during logout:", error);
+        alert("An error occurred during logout.");
+    }
+}
+
+// Update the UI based on user role
+function updateUI(role) {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('register-section').classList.add('hidden');
+
+    if (role === "admin") {
+        document.getElementById('admin-page').classList.remove('hidden');
+        document.getElementById('user-page').classList.add('hidden');
+    } else {
+        document.getElementById('user-page').classList.remove('hidden');
+        document.getElementById('admin-page').classList.add('hidden');
+    }
+}
+
+// Show the registration form
+function showRegister() {
+    document.getElementById('register-section').classList.remove('hidden');
+    document.getElementById('login-section').classList.add('hidden');
+}
+
+// Show the login form
+function showLogin() {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('register-section').classList.add('hidden');
+}
+
+let loadingInterval;
+
+function startLoadingAnimation(elementId) {
+    let dots = 0;
+    const element = document.getElementById(elementId);
+    loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4; // Cycle through 0, 1, 2, 3
+        element.innerText = `Loading${'.'.repeat(dots)}`; // Update with dots
+    }, 500); // Update every 500ms
+}
+
+function stopLoadingAnimation(elementId) {
+    clearInterval(loadingInterval); // Stop the interval
+    clearDiv(elementId);
+}
+
+// Upload audio file for analysis
+async function uploadAudio() {
+    clearDiv('audio-output');
+    const fileInput = document.getElementById('audio-file');
+    const files = fileInput.files;
+
+    if (!files.length) {
+        alert("Please select at least one audio file.");
+        return;
+    }
+
+    startLoadingAnimation('audio-output'); // Start loading animation
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        // Must be same name as it is in multer config in backend
+        formData.append('audioFiles[]', files[i]);
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}api/analyze`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        });
+
+        const rawData = await response.json();
+
+        stopLoadingAnimation('audio-output'); // Stop loading animation
+
+        if (response.ok) {
+            const scores = rawData.data;
+            for (let i = 0; i < scores.length; i++) {
+              const fileLabel = document.createElement('h3');
+              fileLabel.innerText = `File ${i + 1} Classification Results:`;
+              document.getElementById('audio-output').appendChild(fileLabel);
+
+              for (let j = 0; j < scores[i].length; j++) {
+                const score = scores[i][j];
+                const scoreElement = document.createElement('div');
+                scoreElement.innerText = `Label: ${score.label}, Score ${j + 1}: ${score.score}`;
+                document.getElementById('audio-output').appendChild(scoreElement);
+              }
+            }
+        } else {
+            alert(rawData.error);
+        }
+    } catch (error) {
+        console.error("Error during audio upload:", error);
+        alert("An error occurred during audio upload.");
+        stopLoadingAnimation('audio-output'); // Stop loading animation on error
+    }
 }
 
 // Get the current API usage count
 async function getUsage() {
+  clearDiv('usage-output');
   const response = await fetch(`${BASE_URL}admin/usage`, {
       method: 'GET',
       credentials: 'include'
@@ -56,55 +227,8 @@ async function getUsage() {
   }
 }
 
-// Upload audio file for analysis
-async function uploadAudio() {
-  const fileInput = document.getElementById('audio-file');
-  const file = fileInput.files[0];
-
-  if (!file) {
-      alert("Please select an audio file.");
-      return;
-  }
-
-  const formData = new FormData();
-  formData.append('file', file); // Ensure your server expects this field name
-
-  const response = await fetch(`${BASE_URL}api/analyze`, {
-      method: 'POST',
-      body: file,
-      credentials: 'include'
-  });
-
-  const rawData = await response.json();
-
-  const scores = rawData.data;
-
-  if (response.ok) {
-    for (let i = 0; i < scores.length; i++) {
-        const score = scores[i];
-        const scoreElement = document.createElement('div');
-        scoreElement.innerText = `Label: ${score.label},Score ${i + 1}: ${score.score}`;
-        document.getElementById('audio-output').appendChild(scoreElement);
-    }
-  } else {
-      alert(data.error);
-  }
-}
-
-async function test() {
-  const response = await fetch(`${BASE_URL}api/test`, {
-      method: 'GET',
-      credentials: 'include'
-  });
-
-  const data = await response.json();
-
-  if (response.ok) {
-    document.getElementById('test-output').innerText = data.message;
-  }
-}
-
 async function getUsers() {
+  clearDiv('users-output');
   const response = await fetch(`${BASE_URL}admin/users`, {
       method: 'GET',
       credentials: 'include'
@@ -123,18 +247,6 @@ async function getUsers() {
   }
 }
 
-// Log out the user
-async function logout() {
-  const response = await fetch(`${BASE_URL}auth/logout`, {
-      method: 'POST',
-      credentials: 'include'
-  });
-
-  const data = await response.json();
-  alert(data.message);
-  document.getElementById('admin-section').classList.add('hidden');
-  document.getElementById('usage-section').classList.add('hidden');
-  document.getElementById('usage-output').innerText = '';
-  document.getElementById('login-section').classList.remove('hidden');
-  document.getElementById('register-section').classList.remove('hidden');
+function clearDiv(id) {
+  document.getElementById(id).innerHTML = '';
 }
