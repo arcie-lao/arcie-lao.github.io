@@ -141,6 +141,24 @@ async function logout() {
     }
 }
 
+async function deleteUser() {
+    const email = document.getElementById('delete-email').value;
+    try {
+        const response = await fetch(`${BASE_URL}admin/deleteUserByEmail`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: document.getElementById('delete-email').value }),
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        alert("An error occurred while deleting user.");
+    }
+}
+
 // Update the UI based on user role
 function updateUI(role) {
     document.getElementById('login-section').classList.add('hidden');
