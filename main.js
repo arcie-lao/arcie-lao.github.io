@@ -22,6 +22,31 @@ window.onload = async function () {
   }
 };
 
+async function changePassword() {
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    
+    if (!oldPassword || !newPassword) {
+        alert("Please fill out all fields.");
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${BASE_URL}auth/changePassword`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPassword, newPassword }),
+            credentials: 'include'
+        });
+    
+        const data = await response.json();
+        alert(data.message || data.error);
+    } catch (error) {
+        console.error("Error changing password:", error);
+        alert("An error occurred while changing password.");
+    }
+}
+
 function getCookie(name) {
   const cookies = document.cookie.split(';').map(cookie => cookie.trim());
   for (let cookie of cookies) {
@@ -107,6 +132,7 @@ async function logout() {
         // Reset UI
         document.getElementById('login-section').classList.remove('hidden');
         document.getElementById('register-section').classList.add('hidden');
+        document.getElementById('change-password-section').classList.add('hidden');
         document.getElementById('user-page').classList.add('hidden');
         document.getElementById('admin-page').classList.add('hidden');
     } catch (error) {
@@ -123,9 +149,11 @@ function updateUI(role) {
     if (role === "admin") {
         document.getElementById('admin-page').classList.remove('hidden');
         document.getElementById('user-page').classList.add('hidden');
+        document.getElementById('change-password-section').classList.remove('hidden');
     } else {
         document.getElementById('user-page').classList.remove('hidden');
         document.getElementById('admin-page').classList.add('hidden');
+        document.getElementById('change-password-section').classList.remove('hidden');
     }
 }
 
