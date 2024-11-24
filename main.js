@@ -1,5 +1,5 @@
-const BASE_URL = 'https://arcielao.com/4537_project/';
-// const BASE_URL = 'http://localhost:3000/4537_project/';
+// const BASE_URL = 'https://arcielao.com/4537_project/';
+const BASE_URL = 'http://localhost:3000/4537_project/';
 
 window.onload = async function () {
   try {
@@ -158,9 +158,9 @@ function stopLoadingAnimation(elementId) {
 }
 
 // Upload audio file for analysis
-async function uploadAudio() {
-    clearDiv('audio-output');
-    const fileInput = document.getElementById('audio-file');
+async function uploadAudio(outputElementId, audioInputId) {
+    clearDiv(outputElementId);
+    const fileInput = document.getElementById(audioInputId);
     const files = fileInput.files;
 
     if (!files.length) {
@@ -168,7 +168,7 @@ async function uploadAudio() {
         return;
     }
 
-    startLoadingAnimation('audio-output'); // Start loading animation
+    startLoadingAnimation(outputElementId); // Start loading animation
 
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -185,20 +185,20 @@ async function uploadAudio() {
 
         const rawData = await response.json();
 
-        stopLoadingAnimation('audio-output'); // Stop loading animation
+        stopLoadingAnimation(outputElementId); // Stop loading animation
 
         if (response.ok) {
             const scores = rawData.data;
             for (let i = 0; i < scores.length; i++) {
               const fileLabel = document.createElement('h3');
               fileLabel.innerText = `File ${i + 1} Classification Results:`;
-              document.getElementById('audio-output').appendChild(fileLabel);
+              document.getElementById(outputElementId).appendChild(fileLabel);
 
               for (let j = 0; j < scores[i].length; j++) {
                 const score = scores[i][j];
                 const scoreElement = document.createElement('div');
                 scoreElement.innerText = `Label: ${score.label}, Score ${j + 1}: ${score.score}`;
-                document.getElementById('audio-output').appendChild(scoreElement);
+                document.getElementById(outputElementId).appendChild(scoreElement);
               }
             }
         } else {
@@ -207,13 +207,13 @@ async function uploadAudio() {
     } catch (error) {
         console.error("Error during audio upload:", error);
         alert("An error occurred during audio upload.");
-        stopLoadingAnimation('audio-output'); // Stop loading animation on error
+        stopLoadingAnimation(outputElementId); // Stop loading animation on error
     }
 }
 
 // Get the current API usage count
-async function getUsage() {
-  clearDiv('usage-output');
+async function getUsage(outputElementId) {
+  clearDiv(outputElementId);
   const response = await fetch(`${BASE_URL}admin/usage`, {
       method: 'GET',
       credentials: 'include'
@@ -221,7 +221,7 @@ async function getUsage() {
 
   const data = await response.json();
   if (response.ok) {
-      document.getElementById('usage-output').innerText = `Current Usage: ${data.usage.api_usage}`;
+      document.getElementById(outputElementId).innerText = `Current Usage: ${data.usage.api_usage}`;
   } else {
       alert(data.error);
   }

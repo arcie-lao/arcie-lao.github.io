@@ -36,13 +36,13 @@
         
         <div class="section" id="audio-upload-section">
             <h2>Upload Audio for Analysis</h2>
-            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" multiple>
-            <button onclick="uploadAudio()">Analyze Audio</button>
-            <p id="audio-output"></p>
+            <input type="file" id="audio-file-user" accept=".flac,.wav,.mp3" multiple>
+            <button onclick="uploadAudio('audio-output-user', 'audio-file-user')">Analyze Audio</button>
+            <p id="audio-output-user"></p>
         </div>
 
-        <button onclick="getUsage()">Get API Usage</button>
-        <p id="usage-output"></p>
+        <button onclick="getUsage('usage-output-user')">Get API Usage</button>
+        <p id="usage-output-user"></p>
 
         <button onclick="logout()">Logout</button>
     </div>
@@ -54,13 +54,13 @@
 
         <div class="section" id="audio-upload-section">
             <h2>Upload Audio for Analysis</h2>
-            <input type="file" id="audio-file" accept=".flac,.wav,.mp3" multiple>
-            <button onclick="uploadAudio()">Analyze Audio</button>
-            <p id="audio-output"></p>
+            <input type="file" id="audio-file-admin" accept=".flac,.wav,.mp3" multiple>
+            <button onclick="uploadAudio('audio-output-admin', 'audio-file-admin')">Analyze Audio</button>
+            <p id="audio-output-admin"></p>
         </div>
     
-        <button onclick="getUsage()">Get API Usage</button>
-        <p id="usage-output"></p>
+        <button onclick="getUsage('usage-output-admin')">Get API Usage</button>
+        <p id="usage-output-admin"></p>
     
         <div class="section" id="admin-section">
             <h2>Admin Dashboard</h2>
