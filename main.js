@@ -185,9 +185,22 @@ async function uploadAudio(outputElementId, audioInputId) {
 
         const rawData = await response.json();
 
+        const calculatedScores = await calculateScore(JSON.stringify(rawData.data));
+
         stopLoadingAnimation(outputElementId); // Stop loading animation
 
         if (response.ok) {
+            const calculatedScoresTitle = document.createElement('h3');
+            calculatedScoresTitle.innerText = `Calculated Scores:`;
+            document.getElementById(outputElementId).appendChild(calculatedScoresTitle);
+
+            for (let i = 0; i < calculatedScores.cumulativeScores.length; i++) {
+                const score = calculatedScores.cumulativeScores[i];
+                const scoreElement = document.createElement('div');
+                scoreElement.innerText = `Label: ${score.label}, Score ${i + 1}: ${score.score}`;
+                document.getElementById(outputElementId).appendChild(scoreElement);
+            }
+
             const scores = rawData.data;
             for (let i = 0; i < scores.length; i++) {
               const fileLabel = document.createElement('h3');
@@ -208,6 +221,29 @@ async function uploadAudio(outputElementId, audioInputId) {
         console.error("Error during audio upload:", error);
         alert("An error occurred during audio upload.");
         stopLoadingAnimation(outputElementId); // Stop loading animation on error
+    }
+}
+
+async function calculateScore(scores) {
+
+        try {
+        const response = await fetch(`${BASE_URL}api/calculateScore`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: scores,
+        credentials: 'include'
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+            return data;
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        console.error("Error during score calculation:", error);
+        alert("An error occurred during score calculation.");
     }
 }
 
