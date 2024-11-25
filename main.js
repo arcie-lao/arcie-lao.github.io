@@ -22,6 +22,38 @@ window.onload = async function () {
   }
 };
 
+async function getApiStats() {
+    try {
+        const response = await fetch(`${BASE_URL}admin/apiUsageStats`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            const statsElement = document.getElementById('api-stats-output').getElementsByTagName('tbody')[0];
+            statsElement.innerHTML = ''; // Clear previous rows
+
+            for (let i = 0; i < data.stats.length; i++) {
+                const stat = data.stats[i];
+                const row = statsElement.insertRow();
+                const methodCell = row.insertCell(0);
+                methodCell.textContent = stat.method;
+                const endpointCell = row.insertCell(1);
+                endpointCell.textContent = stat.endpoint;
+                const requestsCell = row.insertCell(2);
+                requestsCell.textContent = stat.requestCount;
+            }
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        console.error("Error getting API stats:", error);
+        alert("An error occurred while getting API stats.");
+    }
+}
+
 async function changePassword() {
     const oldPassword = document.getElementById('old-password').value;
     const newPassword = document.getElementById('new-password').value;

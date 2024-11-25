@@ -36,3 +36,31 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* Center the table horizontally and vertically */
+#api-stats-output {
+  margin: 0 auto; /* Horizontally center the table */
+  border-collapse: collapse; /* Clean border appearance */
+  text-align: left;
+}
+
+/* Add some basic styling */
+#api-stats-output th,
+#api-stats-output td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+#api-stats-output th {
+  background-color: #f4f4f4;
+  text-align: center; /* Center text in the header */
+}
+
+/* Wrapper to center the table vertically */
+.table-container {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  height: 100vh; /* Full viewport height */
+  background-color: #f9f9f9; /* Optional background color */
+}
