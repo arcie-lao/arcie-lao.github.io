@@ -231,6 +231,10 @@ async function uploadAudio(outputElementId, audioInputId) {
 
         const rawData = await response.json();
 
+        if (rawData.apiWarning) {
+            alert(rawData.apiWarning);
+        }
+
         const calculatedScores = await calculateScore(JSON.stringify(rawData.data));
 
         stopLoadingAnimation(outputElementId); // Stop loading animation
@@ -321,7 +325,7 @@ async function getUsers() {
     for (let i = 0; i < data.users.length; i++) {
         const user = data.users[i];
         const userElement = document.createElement('div');
-        userElement.innerText = `User ${i + 1}: ${user.email}, Role: ${user.role}, API Usage: ${user.api_usage}`;
+        userElement.innerText = `User ${i + 1}: ${user.email}, Role: ${user.role}, Token: ${user.api_token}, API Usage: ${user.api_usage}`;
         document.getElementById('users-output').appendChild(userElement);
     }
   } else {
